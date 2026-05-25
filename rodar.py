@@ -15,12 +15,13 @@ df.columns = [col.lower().strip() for col in df.columns]
 # =========================
 
 def iphones_mais_vendidos():
-
-    coluna_modelo = df.columns[0]
-    coluna_vendas = df.columns[1]
+    coluna_modelo = "iphone_model"
+    coluna_vendas = "quantity"
 
     top = (
-        df.sort_values(by=coluna_vendas, ascending=False)
+        df.groupby(coluna_modelo, as_index=False)[coluna_vendas]
+        .sum()
+        .sort_values(by=coluna_vendas, ascending=False)
         .head(10)
     )
 
@@ -41,14 +42,18 @@ def iphones_mais_vendidos():
 
 def comparar_iphones():
 
-    coluna_modelo = df.columns[0]
-    coluna_vendas = df.columns[1]
+    coluna_modelo = "iphone_model"
+    coluna_vendas = "quantity"
 
     iphone1 = input("Digite o primeiro iPhone: ")
     iphone2 = input("Digite o segundo iPhone: ")
 
     dados1 = df[df[coluna_modelo].str.lower() == iphone1.lower()]
     dados2 = df[df[coluna_modelo].str.lower() == iphone2.lower()]
+
+    if dados1.empty or dados2.empty:
+        print("\nUm dos modelos não foi encontrado. Verifique o nome e tente novamente.")
+        return
 
     comparacao = pd.DataFrame({
         "iPhone": [iphone1, iphone2],
@@ -75,11 +80,13 @@ def comparar_iphones():
 
 def grafico_pizza():
 
-    coluna_modelo = df.columns[0]
-    coluna_vendas = df.columns[1]
+    coluna_modelo = "iphone_model"
+    coluna_vendas = "quantity"
 
     top = (
-        df.sort_values(by=coluna_vendas, ascending=False)
+        df.groupby(coluna_modelo, as_index=False)[coluna_vendas]
+        .sum()
+        .sort_values(by=coluna_vendas, ascending=False)
         .head(5)
     )
 
